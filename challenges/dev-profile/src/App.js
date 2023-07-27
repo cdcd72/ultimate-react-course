@@ -1,5 +1,28 @@
 import './App.css';
 
+const skills = [
+  {
+    skill: '.NET',
+    level: 'advanced',
+    color: '#E680FF',
+  },
+  {
+    skill: 'Angular',
+    level: 'advanced',
+    color: '#F08080',
+  },
+  {
+    skill: 'React',
+    level: 'beginner',
+    color: '#00BFFF',
+  },
+  {
+    skill: 'Svelte',
+    level: 'intermediate',
+    color: '#FF6347',
+  },
+];
+
 function App() {
   return (
     <div className="card">
@@ -15,15 +38,15 @@ function App() {
   );
 }
 
-function Avatar(props) {
-  return <img className="avatar" src={props.avatar} alt={props.name} />;
+function Avatar({ name, avatar }) {
+  return <img className="avatar" src={avatar} alt={name} />;
 }
 
-function Intro(props) {
+function Intro({ fullName, biography }) {
   return (
     <div>
-      <h1>{props.fullName}</h1>
-      <p>{props.biography}</p>
+      <h1>{fullName}</h1>
+      <p>{biography}</p>
     </div>
   );
 }
@@ -31,27 +54,30 @@ function Intro(props) {
 function SkillList() {
   return (
     <div className="skill-list">
-      <Skill skill=".NET" emoji="🤘" />
-      <Skill skill="Angular" emoji="👌" />
-      <Skill skill="React" emoji="👍" />
-      <Skill skill="Svelte" emoji="🤙" />
+      {skills.map((skill) => (
+        <Skill skill={skill} key={skill.skill} />
+      ))}
     </div>
   );
 }
 
-function Skill(props) {
-  const getRandomColor = () => {
-    const letters = '0123456789ABCDEF';
-    let color = '#';
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
+function Skill({ skill }) {
+  const getEmoji = (level) => {
+    switch (level) {
+      case 'beginner':
+        return '👌';
+      case 'intermediate':
+        return '👍';
+      case 'advanced':
+        return '🤘';
+      default:
+        return '👌';
     }
-    return color;
   };
   return (
-    <div className="skill" style={{ backgroundColor: getRandomColor() }}>
-      <span>{props.skill}</span>
-      <span>{props.emoji}</span>
+    <div className="skill" style={{ backgroundColor: skill.color }}>
+      <span>{skill.skill}</span>
+      <span>{getEmoji(skill.level)}</span>
     </div>
   );
 }
