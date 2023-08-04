@@ -24,49 +24,34 @@ export default function App() {
 }
 
 function Accordion({ data }) {
-  // Lift up state to control accordion allow open single item and close other items
-  const [currentOpenedNum, setCurrentOpenedNum] = useState(null);
   return (
     <div className="accordion">
       {data.map((element, index) => (
         <AccordionItem
           num={index}
           title={element.title}
+          text={element.text}
           key={element.title}
-          currentOpenedNum={currentOpenedNum}
-          onOpen={setCurrentOpenedNum}
-        >
-          {/* Use children prop make content more flexable */}
-          {element.text}
-        </AccordionItem>
+        />
       ))}
-      <AccordionItem
-        num={22}
-        title="Custom title?"
-        key="Custom title?"
-        currentOpenedNum={currentOpenedNum}
-        onOpen={setCurrentOpenedNum}
-      >
-        <ul>
-          <li>1</li>
-          <li>2</li>
-        </ul>
-      </AccordionItem>
     </div>
   );
 }
 
-function AccordionItem({ num, title, currentOpenedNum, onOpen, children }) {
-  const isOpen = num === currentOpenedNum;
+function AccordionItem({ num, title, text }) {
+  // 1. Create piece of state
+  const [isOpen, setIsOpen] = useState(false);
   const handleToggle = () => {
-    onOpen(isOpen ? null : num);
+    // 3. Update piece of state
+    setIsOpen((currentIsOpen) => !currentIsOpen);
   };
+  // 2. Use piece of state
   return (
     <div className={`item ${isOpen ? 'open' : ''}`} onClick={handleToggle}>
       <p className="number">{num < 9 ? `0${num + 1}` : num + 1}</p>
       <p className="title">{title}</p>
       <p className="icon">{isOpen ? '-' : '+'}</p>
-      {isOpen && <div className="content-box">{children}</div>}
+      {isOpen && <div className="content-box">{text}</div>}
     </div>
   );
 }
