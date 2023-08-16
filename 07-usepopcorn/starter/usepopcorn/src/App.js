@@ -54,15 +54,17 @@ const IMDB_ID = '';
 const KEY = '';
 
 export default function App() {
+  const [query, setQuery] = useState('');
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const query = 'interstellar';
+
   useEffect(() => {
     async function fetchMovies() {
       try {
         setIsLoading(true);
+        setError('');
         const res = await fetch(
           `http://www.omdbapi.com/?i=${IMDB_ID}&apikey=${KEY}&s=${query}`
         );
@@ -78,12 +80,20 @@ export default function App() {
         setIsLoading(false);
       }
     }
+
+    if (query.length < 3) {
+      setMovies([]);
+      setError('');
+      return;
+    }
+
     fetchMovies();
-  }, []);
+  }, [query]);
+
   return (
     <>
       <NavBar>
-        <Search />
+        <Search query={query} onQuery={setQuery} />
         <NumResults movies={movies} />
       </NavBar>
       <Main>
@@ -132,15 +142,14 @@ function Logo() {
   );
 }
 
-function Search() {
-  const [query, setQuery] = useState('');
+function Search({ query, onQuery }) {
   return (
     <input
       className="search"
       type="text"
       placeholder="Search movies..."
       value={query}
-      onChange={(e) => setQuery(e.target.value)}
+      onChange={(e) => onQuery(e.target.value)}
     />
   );
 }
