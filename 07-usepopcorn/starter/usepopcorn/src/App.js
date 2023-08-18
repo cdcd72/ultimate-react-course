@@ -255,6 +255,15 @@ function MovieDetails({
     fetchMovie();
   }, [selectedId]);
 
+  useEffect(() => {
+    if (!title) return;
+    document.title = `Movie | ${title}`;
+    // Cleanup Function
+    return () => {
+      document.title = 'usePopcorn';
+    };
+  }, [title]);
+
   const handleAddWatched = () => {
     const newMovie = {
       imdbId: selectedId,
