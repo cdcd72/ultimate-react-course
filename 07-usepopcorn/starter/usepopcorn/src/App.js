@@ -5,7 +5,6 @@ import StarRating from './StarRating';
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
-const IMDB_ID = '';
 const KEY = '';
 
 export default function App() {
@@ -35,21 +34,29 @@ export default function App() {
   };
 
   useEffect(() => {
+    const controller = new AbortController();
+
     async function fetchMovies() {
       try {
         setIsLoading(true);
         setError('');
         const res = await fetch(
-          `http://www.omdbapi.com/?i=${IMDB_ID}&apikey=${KEY}&s=${query}`
+          `http://www.omdbapi.com/?apikey=${KEY}&s=${query}`,
+          {
+            signal: controller.signal,
+          }
         );
         if (!res.ok)
           throw new Error('Something went wrong with fetching movies!');
         const data = await res.json();
         if (data.Response === 'False') throw new Error('Movies not found!');
         setMovies(data.Search);
+        setError('');
       } catch (error) {
-        console.error(error.message);
-        setError(error.message);
+        if (error.name !== 'AbortError') {
+          console.log(error.message);
+          setError(error.message);
+        }
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +68,12 @@ export default function App() {
       return;
     }
 
+    handleCloseMovie();
     fetchMovies();
+
+    return () => {
+      controller.abort();
+    };
   }, [query]);
 
   return (
@@ -226,6 +238,18 @@ function MovieDetails({
   } = movie;
 
   useEffect(() => {
+    const callback = (event) => {
+      if (event.code === 'Escape') {
+        onCloseMovie();
+      }
+    };
+    document.addEventListener('keydown', callback);
+    return () => {
+      document.removeEventListener('keydown', callback);
+    };
+  }, [onCloseMovie]);
+
+  useEffect(() => {
     async function fetchMovie() {
       try {
         setIsLoading(true);
@@ -239,7 +263,7 @@ function MovieDetails({
         if (data.Response === 'False') throw new Error('Movie not found!');
         setMovie(data);
       } catch (error) {
-        console.error(error.message);
+        console.log(error.message);
         setError(error.message);
       } finally {
         setIsLoading(false);
