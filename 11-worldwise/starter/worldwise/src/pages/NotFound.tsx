@@ -1,10 +1,7 @@
-import Nav from '../components/Nav';
-
 function NotFound() {
   return (
     <div>
-      <Nav />
-      <h1>Not found :(</h1>
+      <h1>Page not found 😢</h1>
     </div>
   );
 }
