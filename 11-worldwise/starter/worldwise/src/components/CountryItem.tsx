@@ -1,6 +1,8 @@
-import styles from "./CountryItem.module.css";
+import styles from './CountryItem.module.css';
 
-function CountryItem({ country }) {
+import { Country } from '../models/country.model';
+
+function CountryItem({ country }: { country: Country }) {
   return (
     <li className={styles.countryItem}>
       <span>{country.emoji}</span>
