@@ -8,5 +8,5 @@ export interface City {
     lat: number;
     lng: number;
   };
-  id: number;
+  id: string;
 }

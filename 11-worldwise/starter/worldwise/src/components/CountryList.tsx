@@ -6,6 +6,8 @@ import Spinner from './Spinner';
 import Message from './Message';
 import CountryItem from './CountryItem';
 
+import { useCities } from '../contexts/CitiesContext';
+
 function GetCountries(cities: City[]) {
   let countries: Country[] = [];
   cities.forEach((city: City) => {
@@ -18,13 +20,8 @@ function GetCountries(cities: City[]) {
   return countries;
 }
 
-function CountryList({
-  cities,
-  isLoading,
-}: {
-  cities: City[];
-  isLoading: boolean;
-}) {
+function CountryList() {
+  const { isLoading, cities } = useCities();
   if (isLoading) return <Spinner />;
   if (!cities.length)
     return (

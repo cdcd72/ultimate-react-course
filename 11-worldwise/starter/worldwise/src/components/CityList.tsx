@@ -1,17 +1,13 @@
 import styles from './CityList.module.css';
 
-import { City } from '../models/city.model';
 import Spinner from './Spinner';
 import Message from './Message';
 import CityItem from './CityItem';
 
-function CityList({
-  cities,
-  isLoading,
-}: {
-  cities: City[];
-  isLoading: boolean;
-}) {
+import { useCities } from '../contexts/CitiesContext';
+
+function CityList() {
+  const { isLoading, cities } = useCities();
   if (isLoading) return <Spinner />;
   if (!cities.length)
     return (
