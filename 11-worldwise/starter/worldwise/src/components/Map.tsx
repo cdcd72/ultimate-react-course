@@ -1,7 +1,7 @@
 import styles from './Map.module.css';
 
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   MapContainer,
   Marker,
@@ -13,13 +13,19 @@ import {
 import { LatLngExpression } from 'leaflet';
 
 import { useCities } from '../contexts/CitiesContext';
+import { useGeolocation } from '../hooks/useGeolocation';
+import Button from './Button';
+import { useUrlPosition } from '../hooks/useUrlPosition';
 
 function Map() {
   const { cities } = useCities();
   const [mapPosition, setMapPosition] = useState({ lat: 40, lng: 0 });
-  const [searchParams] = useSearchParams();
-  const lat = searchParams.get('lat');
-  const lng = searchParams.get('lng');
+  const {
+    isLoading: isLoadingPosition,
+    position: geolocationPosition,
+    getPosition,
+  } = useGeolocation();
+  const { lat, lng } = useUrlPosition();
 
   useEffect(() => {
     if (lat && lng) {
@@ -27,12 +33,26 @@ function Map() {
     }
   }, [lat, lng]);
 
+  useEffect(() => {
+    if (geolocationPosition) {
+      setMapPosition({
+        lat: geolocationPosition.lat,
+        lng: geolocationPosition.lng,
+      });
+    }
+  }, [geolocationPosition]);
+
   return (
     <div className={styles.mapContainer}>
+      {!geolocationPosition && (
+        <Button type="position" onClick={getPosition}>
+          {isLoadingPosition ? 'Loading...' : 'Use your position'}
+        </Button>
+      )}
       <MapContainer
         className={styles.map}
         center={mapPosition}
-        zoom={13}
+        zoom={6}
         scrollWheelZoom={true}
       >
         <TileLayer
