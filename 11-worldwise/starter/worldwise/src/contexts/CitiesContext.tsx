@@ -13,6 +13,7 @@ type CitiesContextType = {
   cities: City[];
   currentCity: City;
   fetchCity: (id: string) => Promise<void>;
+  createCity: (city: City) => Promise<void>;
 };
 
 const BASE_URL = 'http://localhost:8000';
@@ -24,7 +25,7 @@ const CitiesContext = createContext<CitiesContextType>({
     cityName: '',
     country: '',
     emoji: '',
-    date: '',
+    date: new Date(),
     notes: '',
     position: {
       lat: 0,
@@ -33,6 +34,7 @@ const CitiesContext = createContext<CitiesContextType>({
     id: '',
   },
   fetchCity: async () => {},
+  createCity: async () => {},
 });
 
 function CitiesProvider({ children }: { children: ReactNode }) {
@@ -42,7 +44,7 @@ function CitiesProvider({ children }: { children: ReactNode }) {
     cityName: '',
     country: '',
     emoji: '',
-    date: '',
+    date: new Date(),
     notes: '',
     position: {
       lat: 0,
@@ -80,9 +82,28 @@ function CitiesProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function createCity(city: City) {
+    try {
+      setIsLoading(true);
+      const res = await fetch(`${BASE_URL}/cities`, {
+        method: 'POST',
+        body: JSON.stringify(city),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const addedCity = await res.json();
+      setCities((cities) => [...cities, addedCity]);
+    } catch {
+      alert('There was an error creating city!');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <CitiesContext.Provider
-      value={{ isLoading, cities, currentCity, fetchCity }}
+      value={{ isLoading, cities, currentCity, fetchCity, createCity }}
     >
       {children}
     </CitiesContext.Provider>
