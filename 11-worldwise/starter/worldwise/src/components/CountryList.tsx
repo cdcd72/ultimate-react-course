@@ -12,10 +12,7 @@ function GetCountries(cities: City[]) {
   let countries: Country[] = [];
   cities.forEach((city: City) => {
     if (!countries.map((country) => country.country).includes(city.country))
-      countries = [
-        ...countries,
-        { country: city.country, emoji: city.emoji, id: Math.random() },
-      ];
+      countries = [...countries, { country: city.country, emoji: city.emoji }];
   });
   return countries;
 }

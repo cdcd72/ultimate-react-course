@@ -8,7 +8,7 @@ import BackButton from './BackButton';
 
 import { useCities } from '../contexts/CitiesContext';
 
-const formatDate = (date: string) => {
+const formatDate = (date: Date) => {
   if (!date) return '';
   return new Intl.DateTimeFormat('en', {
     day: 'numeric',
@@ -23,7 +23,7 @@ function City() {
   const { isLoading, currentCity, fetchCity } = useCities();
 
   useEffect(() => {
-    fetchCity(`${id}`);
+    fetchCity(Number(id));
   }, [id]);
 
   if (isLoading) return <Spinner />;

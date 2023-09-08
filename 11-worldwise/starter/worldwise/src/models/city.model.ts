@@ -7,5 +7,5 @@ export interface City {
   date: Date;
   notes: string;
   position: Position;
-  id?: string;
+  id?: number;
 }
