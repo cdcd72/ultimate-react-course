@@ -14,6 +14,7 @@ type CitiesContextType = {
   currentCity: City;
   fetchCity: (id: string) => Promise<void>;
   createCity: (city: City) => Promise<void>;
+  deleteCity: (id: string | undefined) => Promise<void>;
 };
 
 const BASE_URL = 'http://localhost:8000';
@@ -35,6 +36,7 @@ const CitiesContext = createContext<CitiesContextType>({
   },
   fetchCity: async () => {},
   createCity: async () => {},
+  deleteCity: async () => {},
 });
 
 function CitiesProvider({ children }: { children: ReactNode }) {
@@ -101,9 +103,30 @@ function CitiesProvider({ children }: { children: ReactNode }) {
     }
   }
 
+  async function deleteCity(id: string | undefined) {
+    try {
+      setIsLoading(true);
+      await fetch(`${BASE_URL}/cities/${id}`, {
+        method: 'DELETE',
+      });
+      setCities((cities) => cities.filter((city) => city.id !== id));
+    } catch {
+      alert('There was an error deleting city!');
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <CitiesContext.Provider
-      value={{ isLoading, cities, currentCity, fetchCity, createCity }}
+      value={{
+        isLoading,
+        cities,
+        currentCity,
+        fetchCity,
+        createCity,
+        deleteCity,
+      }}
     >
       {children}
     </CitiesContext.Provider>
