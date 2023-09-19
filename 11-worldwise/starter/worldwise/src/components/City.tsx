@@ -24,7 +24,7 @@ function City() {
 
   useEffect(() => {
     fetchCity(Number(id));
-  }, [id]);
+  }, [id, fetchCity]);
 
   if (isLoading) return <Spinner />;
 

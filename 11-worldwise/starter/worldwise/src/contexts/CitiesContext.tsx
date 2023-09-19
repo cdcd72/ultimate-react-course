@@ -1,6 +1,7 @@
 import {
   ReactNode,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useReducer,
@@ -147,7 +148,7 @@ function CitiesProvider({ children }: { children: ReactNode }) {
     fetchCities();
   }, []);
 
-  async function fetchCity(id: number) {
+  const fetchCity = useCallback(async function fetchCity(id: number) {
     dispatch({ type: CityActionKind.loading });
     try {
       const res = await fetch(`${BASE_URL}/cities/${id}`);
@@ -159,7 +160,7 @@ function CitiesProvider({ children }: { children: ReactNode }) {
         payload: 'There was an error fetching city!',
       });
     }
-  }
+  }, []);
 
   async function createCity(city: City) {
     dispatch({ type: CityActionKind.loading });
