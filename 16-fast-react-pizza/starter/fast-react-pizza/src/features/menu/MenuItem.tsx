@@ -1,4 +1,7 @@
-function MenuItem({ pizza }) {
+import { Pizza } from '../../models/pizza';
+import { formatCurrency } from '../../utils/helpers';
+
+function MenuItem({ pizza }: { pizza: Pizza }) {
   const { id, name, unitPrice, ingredients, soldOut, imageUrl } = pizza;
 
   return (
