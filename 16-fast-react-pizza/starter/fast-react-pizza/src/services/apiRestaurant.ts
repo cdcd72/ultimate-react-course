@@ -21,7 +21,7 @@ export async function getOrder(id: string | undefined): Promise<Order> {
   return data;
 }
 
-export async function createOrder(newOrder) {
+export async function createOrder(newOrder: Order) {
   try {
     const res = await fetch(`${API_URL}/order`, {
       method: 'POST',

@@ -1,15 +1,15 @@
 import { Cart } from './cart';
 
 export interface Order {
-  id: string;
+  id?: string;
   customer: string;
-  // phone: string;
-  // address: string;
+  phone: string;
+  address: string;
   priority: boolean;
-  estimatedDelivery: string;
   cart: Cart[];
+  orderPrice?: number;
+  priorityPrice?: number;
+  status?: string;
   //position: string;
-  orderPrice: number;
-  priorityPrice: number;
-  status: string;
+  estimatedDelivery?: string;
 }

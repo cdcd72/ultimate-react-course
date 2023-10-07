@@ -52,8 +52,8 @@ function Order() {
   );
 }
 
-export async function loader({ params }: { params: Params }) {
+export const loader = async ({ params }: { params: Params }) => {
   return await getOrder(params.orderId);
-}
+};
 
 export default Order;
