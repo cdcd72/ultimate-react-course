@@ -1,9 +1,9 @@
-import { Pizza } from '../models/pizza';
-import { Order } from '../models/order';
+import { IPizza } from '../models/pizza';
+import { IOrder } from '../models/order';
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
-export async function getMenu(): Promise<Pizza[]> {
+export async function getMenu(): Promise<IPizza[]> {
   const res = await fetch(`${API_URL}/menu`);
 
   // fetch won't throw error on 400 errors (e.g. when URL is wrong), so we need to do it manually. This will then go into the catch block, where the message is set
@@ -13,7 +13,7 @@ export async function getMenu(): Promise<Pizza[]> {
   return data;
 }
 
-export async function getOrder(id: string | undefined): Promise<Order> {
+export async function getOrder(id: string | undefined): Promise<IOrder> {
   const res = await fetch(`${API_URL}/order/${id}`);
   if (!res.ok) throw Error(`Couldn't find order #${id}`);
 
@@ -21,7 +21,7 @@ export async function getOrder(id: string | undefined): Promise<Order> {
   return data;
 }
 
-export async function createOrder(newOrder: Order) {
+export async function createOrder(newOrder: IOrder) {
   try {
     const res = await fetch(`${API_URL}/order`, {
       method: 'POST',

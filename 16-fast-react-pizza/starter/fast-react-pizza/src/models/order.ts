@@ -1,12 +1,12 @@
-import { Cart } from './cart';
+import { ICartItem } from './cartItem';
 
-export interface Order {
+export interface IOrder {
   id?: string;
   customer: string;
   phone: string;
   address: string;
   priority: boolean;
-  cart: Cart[];
+  cart: ICartItem[];
   orderPrice?: number;
   priorityPrice?: number;
   status?: string;

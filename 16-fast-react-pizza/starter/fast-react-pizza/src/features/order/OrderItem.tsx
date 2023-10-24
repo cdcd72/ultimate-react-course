@@ -1,4 +1,4 @@
-import { Cart } from '../../models/cart';
+import { ICartItem } from '../../models/cartItem';
 import { formatCurrency } from '../../utils/helpers';
 
 function OrderItem({
@@ -6,7 +6,7 @@ function OrderItem({
   isLoadingIngredients,
   ingredients,
 }: {
-  item: Cart;
+  item: ICartItem;
   isLoadingIngredients?: boolean;
   ingredients?: string[];
 }) {

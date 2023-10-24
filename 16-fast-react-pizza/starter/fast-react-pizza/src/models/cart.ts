@@ -1,7 +1,5 @@
-export interface Cart {
-  pizzaId: number;
-  name: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
+import { ICartItem } from './cartItem';
+
+export interface ICart {
+  items: ICartItem[];
 }
