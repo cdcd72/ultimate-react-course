@@ -1,5 +1,6 @@
 import { IPizza } from '../models/pizza';
 import { IOrder } from '../models/order';
+import { ICreateOrder } from '../models/createOrder';
 
 const API_URL = 'https://react-fast-pizza-api.onrender.com/api';
 
@@ -21,7 +22,7 @@ export async function getOrder(id: string | undefined): Promise<IOrder> {
   return data;
 }
 
-export async function createOrder(newOrder: IOrder) {
+export async function createOrder(newOrder: ICreateOrder): Promise<IOrder> {
   try {
     const res = await fetch(`${API_URL}/order`, {
       method: 'POST',
