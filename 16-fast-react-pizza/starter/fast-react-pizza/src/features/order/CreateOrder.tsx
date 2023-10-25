@@ -1,15 +1,15 @@
 import { useState } from 'react';
 import { Form, redirect, useActionData, useNavigation } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 
 import { createOrder } from '../../services/apiRestaurant';
 import Button from '../../ui/Button';
-import { getUserName } from '../user/userSlice';
+import { fetchAddress, getUserName } from '../user/userSlice';
 import { clearCart, getCartItems, getTotalCartPrice } from '../cart/cartSlice';
 import EmptyCart from '../cart/EmptyCart';
 import store from '../../store';
 import { formatCurrency } from '../../utils/helpers';
 import { ICreateOrder } from '../../models/createOrder';
+import { useAppDispatch, useAppSelector } from '../../hooks/default';
 
 // https://uibakery.io/regex-library/phone-number
 const isValidPhone = (str: string) =>
@@ -19,14 +19,15 @@ const isValidPhone = (str: string) =>
 
 function CreateOrder() {
   const [withPriority, setWithPriority] = useState(false);
-  const username = useSelector(getUserName);
+  const username = useAppSelector(getUserName);
   const navigation = useNavigation();
   const isSubmitting = navigation.state === 'submitting';
 
   const formErrors = useActionData() as { phone: string };
+  const dispatch = useAppDispatch();
 
-  const cartItems = useSelector(getCartItems);
-  const totalCartPrice = useSelector(getTotalCartPrice);
+  const cartItems = useAppSelector(getCartItems);
+  const totalCartPrice = useAppSelector(getTotalCartPrice);
   const priorityPrice = withPriority ? totalCartPrice * 0.2 : 0;
   const totalPrice = totalCartPrice + priorityPrice;
 
@@ -35,6 +36,9 @@ function CreateOrder() {
   return (
     <div className="px-4 py-6">
       <h2 className="mb-8 text-xl font-semibold">Ready to order? Let's go!</h2>
+
+      <button onClick={() => dispatch(fetchAddress())}>Get position</button>
+
       <Form method="POST">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="sm:basis-40">First Name</label>

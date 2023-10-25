@@ -1,13 +1,13 @@
-import { useSelector } from 'react-redux';
 import { ICartItem } from '../../models/cartItem';
 import { formatCurrency } from '../../utils/helpers';
 import DeleteItem from './DeleteItem';
 import UpdateItemQuantity from './UpdateItemQuantity';
 import { getCurrentQuantityById } from './cartSlice';
+import { useAppSelector } from '../../hooks/default';
 
 function CartItem({ item }: { item: ICartItem }) {
   const { pizzaId, name, quantity, totalPrice } = item;
-  const currentQuantity = useSelector(getCurrentQuantityById(pizzaId));
+  const currentQuantity = useAppSelector(getCurrentQuantityById(pizzaId));
 
   return (
     <li className="py-3 sm:flex sm:items-center sm:justify-between">

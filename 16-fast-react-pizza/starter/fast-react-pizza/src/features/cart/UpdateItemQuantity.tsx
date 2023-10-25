@@ -1,7 +1,6 @@
-import { useDispatch } from 'react-redux';
-
 import Button from '../../ui/Button';
 import { increaseItemQuantity, decreaseItemQuantity } from './cartSlice';
+import { useAppDispatch } from '../../hooks/default';
 
 function UpdateItemQuantity({
   pizzaId,
@@ -10,7 +9,7 @@ function UpdateItemQuantity({
   pizzaId: number;
   currentQuantity: number;
 }) {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   return (
     <div className="flex items-center gap-2 md:gap-3">
       <Button

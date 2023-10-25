@@ -1,9 +1,8 @@
-import { useSelector } from 'react-redux';
-
 import { getUserName } from './userSlice';
+import { useAppSelector } from '../../hooks/default';
 
 function Username() {
-  const username = useSelector(getUserName);
+  const username = useAppSelector(getUserName);
 
   if (!username) return null;
 
