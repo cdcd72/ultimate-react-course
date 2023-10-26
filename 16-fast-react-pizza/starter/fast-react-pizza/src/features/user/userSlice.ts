@@ -54,9 +54,10 @@ const userSlice = createSlice({
         state.position = action.payload.position;
         state.address = action.payload.address;
       })
-      .addCase(fetchAddress.rejected, (state, action) => {
+      .addCase(fetchAddress.rejected, (state) => {
         state.status = 'error';
-        state.error = action.error.message;
+        state.error =
+          'There was problem getting your address. Make sure to fill this field!';
       });
   },
 });
@@ -64,5 +65,7 @@ const userSlice = createSlice({
 export const { updateName } = userSlice.actions;
 
 export default userSlice.reducer;
+
+export const getUser = ({ user }: { user: IUser }) => user;
 
 export const getUserName = ({ user }: { user: IUser }) => user.name;

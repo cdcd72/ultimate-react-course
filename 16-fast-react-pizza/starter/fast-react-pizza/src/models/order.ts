@@ -11,5 +11,5 @@ export interface IOrder {
   priorityPrice: number;
   status: string;
   estimatedDelivery: string;
-  //position: string;
+  position: string;
 }

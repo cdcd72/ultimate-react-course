@@ -6,4 +6,5 @@ export interface ICreateOrder {
   address: string;
   priority: boolean;
   cart: ICartItem[];
+  position: string;
 }
