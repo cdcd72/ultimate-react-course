@@ -1,26 +1,6 @@
-import styled, { css } from 'styled-components';
+import styled, { RuleSet, css } from 'styled-components';
 
-const sizes = {
-  small: css`
-    font-size: 1.2rem;
-    padding: 0.4rem 0.8rem;
-    text-transform: uppercase;
-    font-weight: 600;
-    text-align: center;
-  `,
-  medium: css`
-    font-size: 1.4rem;
-    padding: 1.2rem 1.6rem;
-    font-weight: 500;
-  `,
-  large: css`
-    font-size: 1.6rem;
-    padding: 1.2rem 2.4rem;
-    font-weight: 500;
-  `,
-};
-
-const variations = {
+const variations: { [key: string]: RuleSet<object> } = {
   primary: css`
     color: var(--color-brand-50);
     background-color: var(--color-brand-600);
@@ -48,20 +28,45 @@ const variations = {
   `,
 };
 
-const Button = styled.button`
-  font-size: 1.4rem;
-  padding: 1.2rem;
-  font-weight: 500;
+const sizes: { [key: string]: RuleSet<object> } = {
+  small: css`
+    font-size: 1.2rem;
+    padding: 0.4rem 0.8rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    text-align: center;
+  `,
+  medium: css`
+    font-size: 1.4rem;
+    padding: 1.2rem 1.6rem;
+    font-weight: 500;
+  `,
+  large: css`
+    font-size: 1.6rem;
+    padding: 1.2rem 2.4rem;
+    font-weight: 500;
+  `,
+};
+
+interface ButtonProps {
+  variation?: string;
+  size?: string;
+}
+
+const Button = styled.button.attrs<ButtonProps>((props) => ({
+  variation: props.variation,
+  size: props.size,
+}))<ButtonProps>`
   border: none;
   border-radius: var(--border-radius-sm);
-  background-color: var(--color-brand-600);
-  color: var(--color-brand-50);
   box-shadow: var(--shadow-sm);
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--color-brand-700);
-  }
+  ${(props) => variations[props.variation!]}
+  ${(props) => sizes[props.size!]}
 `;
+
+Button.defaultProps = {
+  variation: 'primary',
+  size: 'medium',
+};
 
 export default Button;
