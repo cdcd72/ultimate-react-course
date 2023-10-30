@@ -1,7 +1,8 @@
 import styled from 'styled-components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 import { ICabin } from '../../models/ICabin';
 import { formatCurrency } from '../../utils/helpers';
-import { useMutation } from '@tanstack/react-query';
 import { deleteCabin } from '../../services/apiCabins';
 
 const TableRow = styled.div`
@@ -53,8 +54,16 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
     maxCapacity,
   } = cabin;
 
+  const queryClient = useQueryClient();
   const { isLoading: isDeleting, mutate } = useMutation({
     mutationFn: deleteCabin,
+    onSuccess: () => {
+      alert('Cabin successfully deleted!');
+      queryClient.invalidateQueries({
+        queryKey: ['cabins'],
+      });
+    },
+    onError: (err: Error) => alert(err.message),
   });
 
   return (
