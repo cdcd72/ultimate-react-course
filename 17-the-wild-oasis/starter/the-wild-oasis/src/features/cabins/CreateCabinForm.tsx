@@ -1,11 +1,15 @@
 import styled from 'styled-components';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
+import { FieldValues, useForm } from 'react-hook-form';
 
 import Input from '../../ui/Input';
 import Form from '../../ui/Form';
 import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
-import { FieldValues, useForm } from 'react-hook-form';
+import { createCabin } from '../../services/apiCabins';
+import { ICreateCabin } from '../../models/ICreateCabin';
 
 const FormRow = styled.div`
   display: grid;
@@ -44,10 +48,30 @@ const Error = styled.span`
 `;
 
 function CreateCabinForm() {
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, reset } = useForm();
+  const queryClient = useQueryClient();
+  const { isLoading: isCreating, mutate } = useMutation({
+    mutationFn: createCabin,
+    onSuccess: () => {
+      toast.success('Cabin successfully created!');
+      queryClient.invalidateQueries({
+        queryKey: ['cabins'],
+      });
+      reset();
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
 
   function onSubmit(data: FieldValues) {
-    console.log(data);
+    const cabin: ICreateCabin = {
+      name: data.name,
+      description: data.description,
+      image: data.image,
+      regularPrice: data.regularPrice,
+      discount: data.discount,
+      maxCapacity: data.maxCapacity,
+    };
+    mutate(cabin);
   }
 
   return (
@@ -97,7 +121,7 @@ function CreateCabinForm() {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Add cabin</Button>
+        <Button disabled={isCreating}>Add cabin</Button>
       </FormRow>
     </Form>
   );
