@@ -31,7 +31,7 @@ function CreateCabinForm() {
     const cabin: ICreateCabin = {
       name: data.name,
       description: data.description,
-      image: data.image,
+      image: data.image[0],
       regularPrice: data.regularPrice,
       discount: data.discount,
       maxCapacity: data.maxCapacity,
@@ -117,7 +117,13 @@ function CreateCabinForm() {
       </FormRow>
 
       <FormRow label="Cabin photo" error={errors?.image?.message}>
-        <FileInput id="image" accept="image/*" />
+        <FileInput
+          id="image"
+          accept="image/*"
+          {...register('image', {
+            required: 'This field is required',
+          })}
+        />
       </FormRow>
 
       <FormRow>

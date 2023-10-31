@@ -1,7 +1,7 @@
 export interface ICreateCabin {
   name: string;
   description: string;
-  image: string;
+  image: File;
   regularPrice: number;
   discount: number;
   maxCapacity: number;
