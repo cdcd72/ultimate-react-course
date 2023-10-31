@@ -22,7 +22,7 @@ export async function getCabins(): Promise<ICabin[]> {
   });
 }
 
-export async function createCabin(cabin: ICreateCabin): Promise<ICabin[]> {
+export async function createCabin(cabin: ICreateCabin): Promise<ICabin> {
   // Prevent unexpect bucket path
   const imageName = `${Math.random()}-${cabin.image.name}`.replace('/', '');
 
@@ -39,7 +39,8 @@ export async function createCabin(cabin: ICreateCabin): Promise<ICabin[]> {
         max_capacity: cabin.maxCapacity,
       },
     ])
-    .select();
+    .select()
+    .single();
 
   if (error) {
     console.error(error);
@@ -53,25 +54,23 @@ export async function createCabin(cabin: ICreateCabin): Promise<ICabin[]> {
 
   // 3. Delete the cabin if there was an error uploading image
   if (storageError) {
-    await supabase.from('cabins').delete().eq('id', data.at(0).id);
+    await supabase.from('cabins').delete().eq('id', data.id);
     console.error(storageError);
     throw new Error(
       'Cabin image could not be uploaded and the cabin was not created!'
     );
   }
 
-  return data.map((item) => {
-    return {
-      id: item.id,
-      name: item.name,
-      description: item.description,
-      image: item.image,
-      regularPrice: item.regular_price,
-      discount: item.discount,
-      maxCapacity: item.max_capacity,
-      createdAt: new Date(item.created_at),
-    };
-  });
+  return {
+    id: data.id,
+    name: data.name,
+    description: data.description,
+    image: data.image,
+    regularPrice: data.regular_price,
+    discount: data.discount,
+    maxCapacity: data.max_capacity,
+    createdAt: new Date(data.created_at),
+  };
 }
 
 export async function deleteCabin(id: number) {
