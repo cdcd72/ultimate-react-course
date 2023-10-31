@@ -8,15 +8,15 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
-import { createCabin } from '../../services/apiCabins';
-import { ICreateCabin } from '../../models/ICreateCabin';
+import { createEditCabin } from '../../services/apiCabins';
+import { ICreateEditCabin } from '../../models/ICreateEditCabin';
 
 function CreateCabinForm() {
   const { register, handleSubmit, reset, getValues, formState } = useForm();
   const { errors } = formState;
   const queryClient = useQueryClient();
   const { isLoading: isCreating, mutate } = useMutation({
-    mutationFn: createCabin,
+    mutationFn: createEditCabin,
     onSuccess: () => {
       toast.success('Cabin successfully created!');
       queryClient.invalidateQueries({
@@ -28,7 +28,7 @@ function CreateCabinForm() {
   });
 
   function onSubmit(data: FieldValues) {
-    const cabin: ICreateCabin = {
+    const cabin: ICreateEditCabin = {
       name: data.name,
       description: data.description,
       image: data.image[0],

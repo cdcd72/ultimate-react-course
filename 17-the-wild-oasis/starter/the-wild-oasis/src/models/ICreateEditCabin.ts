@@ -1,7 +1,8 @@
-export interface ICreateCabin {
+export interface ICreateEditCabin {
   name: string;
   description: string;
-  image: File;
+  image_url?: string;
+  image?: File;
   regularPrice: number;
   discount: number;
   maxCapacity: number;

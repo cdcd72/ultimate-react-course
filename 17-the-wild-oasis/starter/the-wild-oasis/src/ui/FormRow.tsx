@@ -1,9 +1,24 @@
 import { ReactNode } from 'react';
 import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
-import { styled } from 'styled-components';
+import { styled, css, RuleSet } from 'styled-components';
 
-const StyledFormRow = styled.div`
-  display: grid;
+const displays: { [key: string]: RuleSet<object> } = {
+  grid: css`
+    display: grid;
+  `,
+  none: css`
+    display: none;
+  `,
+};
+
+interface FormRowProps {
+  display?: string;
+}
+
+const StyledFormRow = styled.div.attrs<FormRowProps>((props) => ({
+  display: props.display,
+}))<FormRowProps>`
+  ${(props) => displays[props.display!]}
   align-items: center;
   grid-template-columns: 24rem 1fr 1.2fr;
   gap: 2.4rem;
@@ -29,6 +44,10 @@ const StyledFormRow = styled.div`
   }
 `;
 
+StyledFormRow.defaultProps = {
+  display: 'grid',
+};
+
 const Label = styled.label`
   font-weight: 500;
 `;
@@ -42,6 +61,7 @@ function FormRow({
   label,
   children,
   error,
+  display,
 }: {
   label?: string;
   children: ReactNode;
@@ -50,9 +70,10 @@ function FormRow({
     | FieldError
     | Merge<FieldError, FieldErrorsImpl<any>>
     | undefined;
+  display?: string;
 }) {
   return (
-    <StyledFormRow>
+    <StyledFormRow display={display}>
       {label && <Label htmlFor={children.props.id}>{label}</Label>}
       {children}
       {error && <Error>{error}</Error>}

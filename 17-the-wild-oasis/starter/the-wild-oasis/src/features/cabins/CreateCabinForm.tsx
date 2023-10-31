@@ -8,11 +8,24 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
-import { createCabin } from '../../services/apiCabins';
-import { ICreateCabin } from '../../models/ICreateCabin';
+import { createEditCabin } from '../../services/apiCabins';
+import { ICreateEditCabin } from '../../models/ICreateEditCabin';
 import { ICabin } from '../../models/ICabin';
 
-function CreateCabinForm({ cabinToEdit = {} }: { cabinToEdit: ICabin }) {
+function CreateCabinForm({
+  cabinToEdit = {
+    id: 0,
+    name: '',
+    description: '',
+    image_url: '',
+    regularPrice: 0,
+    discount: 0,
+    maxCapacity: 0,
+    createdAt: new Date(),
+  },
+}: {
+  cabinToEdit: ICabin;
+}) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
   const { register, handleSubmit, reset, getValues, formState } = useForm({
@@ -21,7 +34,7 @@ function CreateCabinForm({ cabinToEdit = {} }: { cabinToEdit: ICabin }) {
   const { errors } = formState;
   const queryClient = useQueryClient();
   const { isLoading: isCreating, mutate } = useMutation({
-    mutationFn: createCabin,
+    mutationFn: createEditCabin,
     onSuccess: () => {
       toast.success('Cabin successfully created!');
       queryClient.invalidateQueries({
@@ -33,9 +46,10 @@ function CreateCabinForm({ cabinToEdit = {} }: { cabinToEdit: ICabin }) {
   });
 
   function onSubmit(data: FieldValues) {
-    const cabin: ICreateCabin = {
+    const cabin: ICreateEditCabin = {
       name: data.name,
       description: data.description,
+      image_url: data.image_url,
       image: data.image[0],
       regularPrice: data.regularPrice,
       discount: data.discount,
@@ -111,7 +125,6 @@ function CreateCabinForm({ cabinToEdit = {} }: { cabinToEdit: ICabin }) {
         error={errors?.description?.message}
       >
         <Textarea
-          type="number"
           id="description"
           defaultValue=""
           disabled={isCreating}
@@ -125,9 +138,19 @@ function CreateCabinForm({ cabinToEdit = {} }: { cabinToEdit: ICabin }) {
         <FileInput
           id="image"
           accept="image/*"
+          disabled={isCreating}
           {...register('image', {
             required: isEditSession ? false : 'This field is required',
           })}
+        />
+      </FormRow>
+
+      <FormRow display="none">
+        <Input
+          type="text"
+          id="image_url"
+          disabled={isCreating}
+          {...register('image_url')}
         />
       </FormRow>
 

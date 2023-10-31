@@ -53,7 +53,7 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
   const {
     id: cabinId,
     name,
-    image,
+    image_url,
     regularPrice,
     discount,
     maxCapacity,
@@ -74,7 +74,7 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
   return (
     <>
       <TableRow role="row">
-        <Img src={image} />
+        <Img src={image_url} />
         <Cabin>{name}</Cabin>
         <div>Fits up to {maxCapacity} guests</div>
         <Price>{formatCurrency(regularPrice)}</Price>

@@ -1,6 +1,6 @@
 import supabase, { supabaseUrl } from './supabase';
 import { ICabin } from '../models/ICabin';
-import { ICreateCabin } from '../models/ICreateCabin';
+import { ICreateEditCabin } from '../models/ICreateEditCabin';
 
 export async function getCabins(): Promise<ICabin[]> {
   const { data, error } = await supabase.from('cabins').select('*');
@@ -13,7 +13,7 @@ export async function getCabins(): Promise<ICabin[]> {
       id: item.id,
       name: item.name,
       description: item.description,
-      image: item.image,
+      image_url: item.image_url,
       regularPrice: item.regular_price,
       discount: item.discount,
       maxCapacity: item.max_capacity,
@@ -22,30 +22,40 @@ export async function getCabins(): Promise<ICabin[]> {
   });
 }
 
-export async function createCabin(cabin: ICreateCabin): Promise<ICabin> {
+export async function createEditCabin(
+  cabin: ICreateEditCabin,
+  id?: number
+): Promise<ICabin> {
+  const hasImageUrl = cabin.image_url !== '';
   // Prevent unexpect bucket path
-  const imageName = `${Math.random()}-${cabin.image.name}`.replace('/', '');
+  const imageName = `${Math.random()}-${cabin.image?.name}`.replace('/', '');
+  const imagePath = hasImageUrl
+    ? cabin.image_url
+    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-  // 1. Create cabin
-  const { data, error } = await supabase
-    .from('cabins')
-    .insert([
+  let query = await supabase.from('cabins');
+
+  // 1-A. Create cabin
+  if (!id)
+    query = query.insert([
       {
         name: cabin.name,
         description: cabin.description,
-        image: `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`,
+        image_url: imagePath,
         regular_price: cabin.regularPrice,
         discount: cabin.discount,
         max_capacity: cabin.maxCapacity,
       },
-    ])
-    .select()
-    .single();
+    ]);
+
+  const { data, error } = query.select().single();
 
   if (error) {
     console.error(error);
     throw new Error('Cabins could not be created!');
   }
+
+  if (!cabin.image) return data;
 
   // 2. Upload image
   const { error: storageError } = await supabase.storage
@@ -65,7 +75,7 @@ export async function createCabin(cabin: ICreateCabin): Promise<ICabin> {
     id: data.id,
     name: data.name,
     description: data.description,
-    image: data.image,
+    image_url: data.image_url,
     regularPrice: data.regular_price,
     discount: data.discount,
     maxCapacity: data.max_capacity,
