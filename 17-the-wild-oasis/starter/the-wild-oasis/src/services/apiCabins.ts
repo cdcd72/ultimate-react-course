@@ -1,6 +1,7 @@
 import supabase, { supabaseUrl } from './supabase';
 import { ICabin } from '../models/ICabin';
 import { ICreateEditCabin } from '../models/ICreateEditCabin';
+import { PostgrestError } from '@supabase/supabase-js';
 
 export async function getCabins(): Promise<ICabin[]> {
   const { data, error } = await supabase.from('cabins').select('*');
@@ -27,40 +28,75 @@ export async function createEditCabin(
   id?: number
 ): Promise<ICabin> {
   const hasImageUrl = cabin.image_url !== '';
+  const hasImage = cabin.image !== undefined;
   // Prevent unexpect bucket path
   const imageName = `${Math.random()}-${cabin.image?.name}`.replace('/', '');
-  const imagePath = hasImageUrl
-    ? cabin.image_url
-    : `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
 
-  let query = await supabase.from('cabins');
+  let imagePath: string | undefined = '';
+
+  if (hasImage) {
+    imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
+  } else {
+    if (hasImageUrl) {
+      imagePath = cabin.image_url;
+    }
+  }
+
+  let data;
+  let error: PostgrestError | null = null;
 
   // 1-A. Create cabin
-  if (!id)
-    query = query.insert([
-      {
+  if (!id) {
+    const { data: insertedData, error: insertedError } = await supabase
+      .from('cabins')
+      .insert([
+        {
+          name: cabin.name,
+          description: cabin.description,
+          image_url: imagePath,
+          regular_price: cabin.regularPrice,
+          discount: cabin.discount,
+          max_capacity: cabin.maxCapacity,
+        },
+      ])
+      .select()
+      .single();
+
+    data = insertedData;
+    error = insertedError;
+  }
+
+  // 1-B. Update cabin
+  if (id) {
+    const { data: updatedData, error: updatedError } = await supabase
+      .from('cabins')
+      .update({
         name: cabin.name,
         description: cabin.description,
         image_url: imagePath,
         regular_price: cabin.regularPrice,
         discount: cabin.discount,
         max_capacity: cabin.maxCapacity,
-      },
-    ]);
+      })
+      .eq('id', id)
+      .select()
+      .single();
 
-  const { data, error } = query.select().single();
+    data = updatedData;
+    error = updatedError;
+  }
 
   if (error) {
     console.error(error);
     throw new Error('Cabins could not be created!');
   }
 
-  if (!cabin.image) return data;
+  if (!hasImage) return data;
 
   // 2. Upload image
   const { error: storageError } = await supabase.storage
     .from('cabin-images')
-    .upload(imageName, cabin.image);
+    .upload(imageName, cabin.image!);
 
   // 3. Delete the cabin if there was an error uploading image
   if (storageError) {

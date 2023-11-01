@@ -1,3 +1,5 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import toast from 'react-hot-toast';
 import { FieldValues, useForm } from 'react-hook-form';
 
 import Input from '../../ui/Input';
@@ -6,10 +8,9 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
+import { createEditCabin } from '../../services/apiCabins';
 import { ICreateEditCabin } from '../../models/ICreateEditCabin';
 import { ICabin } from '../../models/ICabin';
-import { useCreateCabin } from './useCreateCabin';
-import { useEditCabin } from './useEditCabin';
 
 function CreateCabinForm({
   cabinToEdit = {
@@ -31,8 +32,31 @@ function CreateCabinForm({
     defaultValues: isEditSession ? editValues : {},
   });
   const { errors } = formState;
-  const { isCreating, createCabin } = useCreateCabin();
-  const { isEditing, editCabin } = useEditCabin();
+  const queryClient = useQueryClient();
+  const { isLoading: isCreating, mutate: createCabin } = useMutation({
+    mutationFn: ({ cabin }: { cabin: ICreateEditCabin }) =>
+      createEditCabin(cabin),
+    onSuccess: () => {
+      toast.success('Cabin successfully created!');
+      queryClient.invalidateQueries({
+        queryKey: ['cabins'],
+      });
+      reset();
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
+  const { isLoading: isEditing, mutate: editCabin } = useMutation({
+    mutationFn: ({ cabin, id }: { cabin: ICreateEditCabin; id?: number }) =>
+      createEditCabin(cabin, id),
+    onSuccess: () => {
+      toast.success('Cabin successfully edited!');
+      queryClient.invalidateQueries({
+        queryKey: ['cabins'],
+      });
+      reset();
+    },
+    onError: (err: Error) => toast.error(err.message),
+  });
   const isWorking = isCreating || isEditing;
 
   function onSubmit(data: FieldValues) {
@@ -46,9 +70,8 @@ function CreateCabinForm({
       maxCapacity: data.maxCapacity,
     };
 
-    if (isEditSession)
-      editCabin({ cabin, id: editId }, { onSuccess: (data) => reset(data) });
-    else createCabin({ cabin }, { onSuccess: () => reset() });
+    if (isEditSession) editCabin({ cabin, id: editId });
+    else createCabin({ cabin });
   }
 
   function onSubmitError(errors: FieldValues) {
