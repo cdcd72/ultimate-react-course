@@ -1,4 +1,4 @@
-export interface ICreateEditCabin {
+export interface ICreateUpdateCabin {
   name: string;
   description: string;
   image_url?: string;

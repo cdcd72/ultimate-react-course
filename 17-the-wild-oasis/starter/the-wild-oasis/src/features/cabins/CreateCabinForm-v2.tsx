@@ -8,8 +8,8 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
-import { createEditCabin } from '../../services/apiCabins';
-import { ICreateEditCabin } from '../../models/ICreateEditCabin';
+import { createUpdateCabin } from '../../services/apiCabins';
+import { ICreateUpdateCabin } from '../../models/ICreateUpdateCabin';
 import { ICabin } from '../../models/ICabin';
 
 function CreateCabinForm({
@@ -34,8 +34,8 @@ function CreateCabinForm({
   const { errors } = formState;
   const queryClient = useQueryClient();
   const { isLoading: isCreating, mutate: createCabin } = useMutation({
-    mutationFn: ({ cabin }: { cabin: ICreateEditCabin }) =>
-      createEditCabin(cabin),
+    mutationFn: ({ cabin }: { cabin: ICreateUpdateCabin }) =>
+      createUpdateCabin(cabin),
     onSuccess: () => {
       toast.success('Cabin successfully created!');
       queryClient.invalidateQueries({
@@ -46,8 +46,8 @@ function CreateCabinForm({
     onError: (err: Error) => toast.error(err.message),
   });
   const { isLoading: isEditing, mutate: editCabin } = useMutation({
-    mutationFn: ({ cabin, id }: { cabin: ICreateEditCabin; id?: number }) =>
-      createEditCabin(cabin, id),
+    mutationFn: ({ cabin, id }: { cabin: ICreateUpdateCabin; id?: number }) =>
+      createUpdateCabin(cabin, id),
     onSuccess: () => {
       toast.success('Cabin successfully edited!');
       queryClient.invalidateQueries({
@@ -60,7 +60,7 @@ function CreateCabinForm({
   const isWorking = isCreating || isEditing;
 
   function onSubmit(data: FieldValues) {
-    const cabin: ICreateEditCabin = {
+    const cabin: ICreateUpdateCabin = {
       name: data.name,
       description: data.description,
       image_url: data.image_url,

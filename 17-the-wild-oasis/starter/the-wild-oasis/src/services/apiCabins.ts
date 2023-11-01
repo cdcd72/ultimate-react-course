@@ -1,7 +1,8 @@
+import { PostgrestError } from '@supabase/supabase-js';
+
 import supabase, { supabaseUrl } from './supabase';
 import { ICabin } from '../models/ICabin';
-import { ICreateEditCabin } from '../models/ICreateEditCabin';
-import { PostgrestError } from '@supabase/supabase-js';
+import { ICreateUpdateCabin } from '../models/ICreateUpdateCabin';
 
 export async function getCabins(): Promise<ICabin[]> {
   const { data, error } = await supabase.from('cabins').select('*');
@@ -23,8 +24,8 @@ export async function getCabins(): Promise<ICabin[]> {
   });
 }
 
-export async function createEditCabin(
-  cabin: ICreateEditCabin,
+export async function createUpdateCabin(
+  cabin: ICreateUpdateCabin,
   id?: number
 ): Promise<ICabin> {
   const hasImageUrl = cabin.image_url !== '';

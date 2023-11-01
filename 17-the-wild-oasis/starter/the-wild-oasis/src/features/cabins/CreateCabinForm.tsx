@@ -6,10 +6,10 @@ import Button from '../../ui/Button';
 import FileInput from '../../ui/FileInput';
 import Textarea from '../../ui/Textarea';
 import FormRow from '../../ui/FormRow';
-import { ICreateEditCabin } from '../../models/ICreateEditCabin';
+import { ICreateUpdateCabin } from '../../models/ICreateUpdateCabin';
 import { ICabin } from '../../models/ICabin';
 import { useCreateCabin } from './useCreateCabin';
-import { useEditCabin } from './useEditCabin';
+import { useUpdateCabin } from './useUpdateCabin';
 
 function CreateCabinForm({
   cabinToEdit = {
@@ -32,11 +32,11 @@ function CreateCabinForm({
   });
   const { errors } = formState;
   const { isCreating, createCabin } = useCreateCabin();
-  const { isEditing, editCabin } = useEditCabin();
-  const isWorking = isCreating || isEditing;
+  const { isUpdating, updateCabin } = useUpdateCabin();
+  const isWorking = isCreating || isUpdating;
 
   function onSubmit(data: FieldValues) {
-    const cabin: ICreateEditCabin = {
+    const cabin: ICreateUpdateCabin = {
       name: data.name,
       description: data.description,
       image_url: data.image_url,
@@ -47,7 +47,7 @@ function CreateCabinForm({
     };
 
     if (isEditSession)
-      editCabin({ cabin, id: editId }, { onSuccess: (data) => reset(data) });
+      updateCabin({ cabin, id: editId }, { onSuccess: (data) => reset(data) });
     else createCabin({ cabin }, { onSuccess: () => reset() });
   }
 
