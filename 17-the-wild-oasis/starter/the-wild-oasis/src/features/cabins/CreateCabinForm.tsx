@@ -22,8 +22,10 @@ function CreateCabinForm({
     maxCapacity: 0,
     createdAt: new Date(),
   },
+  onCloseModal,
 }: {
-  cabinToEdit: ICabin;
+  cabinToEdit?: ICabin;
+  onCloseModal?: () => void;
 }) {
   const { id: editId, ...editValues } = cabinToEdit;
   const isEditSession = Boolean(editId);
@@ -47,8 +49,25 @@ function CreateCabinForm({
     };
 
     if (isEditSession)
-      updateCabin({ cabin, id: editId }, { onSuccess: (data) => reset(data) });
-    else createCabin({ cabin }, { onSuccess: () => reset() });
+      updateCabin(
+        { cabin, id: editId },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
+    else
+      createCabin(
+        { cabin },
+        {
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
+        }
+      );
   }
 
   function onSubmitError(errors: FieldValues) {
@@ -56,7 +75,10 @@ function CreateCabinForm({
   }
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onSubmitError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onSubmitError)}
+      type={onCloseModal ? 'modal' : 'regular'}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -148,7 +170,11 @@ function CreateCabinForm({
       </FormRow>
 
       <FormRow>
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isWorking}>
