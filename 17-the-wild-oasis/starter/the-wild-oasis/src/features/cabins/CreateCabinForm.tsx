@@ -16,7 +16,7 @@ function CreateCabinForm({
     id: 0,
     name: '',
     description: '',
-    image_url: '',
+    imageUrl: '',
     regularPrice: 0,
     discount: 0,
     maxCapacity: 0,
@@ -41,7 +41,7 @@ function CreateCabinForm({
     const cabin: ICreateUpdateCabin = {
       name: data.name,
       description: data.description,
-      image_url: data.image_url,
+      imageUrl: data.imageUrl,
       image: data.image[0],
       regularPrice: data.regularPrice,
       discount: data.discount,
@@ -163,9 +163,9 @@ function CreateCabinForm({
       <FormRow display="none">
         <Input
           type="text"
-          id="image_url"
+          id="imageUrl"
           disabled={isWorking}
-          {...register('image_url')}
+          {...register('imageUrl')}
         />
       </FormRow>
 

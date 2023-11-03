@@ -47,7 +47,7 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
     id: cabinId,
     name,
     description,
-    image_url,
+    imageUrl,
     regularPrice,
     discount,
     maxCapacity,
@@ -57,7 +57,7 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
     const duplicatedCabin: ICreateUpdateCabin = {
       name: `Copy of ${name}`,
       description,
-      image_url,
+      imageUrl,
       regularPrice,
       discount,
       maxCapacity,
@@ -67,7 +67,7 @@ function CabinRow({ cabin }: { cabin: ICabin }) {
 
   return (
     <Table.Row>
-      <Img src={image_url} />
+      <Img src={imageUrl} />
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{formatCurrency(regularPrice)}</Price>

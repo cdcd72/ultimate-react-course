@@ -1,7 +1,7 @@
 export interface ICreateUpdateCabin {
   name: string;
   description: string;
-  image_url?: string;
+  imageUrl?: string;
   image?: File;
   regularPrice: number;
   discount: number;

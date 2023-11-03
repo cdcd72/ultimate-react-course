@@ -15,7 +15,7 @@ export async function getCabins(): Promise<ICabin[]> {
       id: item.id,
       name: item.name,
       description: item.description,
-      image_url: item.image_url,
+      imageUrl: item.image_url,
       regularPrice: item.regular_price,
       discount: item.discount,
       maxCapacity: item.max_capacity,
@@ -28,7 +28,7 @@ export async function createUpdateCabin(
   cabin: ICreateUpdateCabin,
   id?: number
 ): Promise<ICabin> {
-  const hasImageUrl = cabin.image_url !== '';
+  const hasImageUrl = cabin.imageUrl !== '';
   const hasImage = cabin.image !== undefined;
   // Prevent unexpect bucket path
   const imageName = `${Math.random()}-${cabin.image?.name}`.replace('/', '');
@@ -39,7 +39,7 @@ export async function createUpdateCabin(
     imagePath = `${supabaseUrl}/storage/v1/object/public/cabin-images/${imageName}`;
   } else {
     if (hasImageUrl) {
-      imagePath = cabin.image_url;
+      imagePath = cabin.imageUrl;
     }
   }
 
@@ -112,7 +112,7 @@ export async function createUpdateCabin(
     id: data.id,
     name: data.name,
     description: data.description,
-    image_url: data.image_url,
+    imageUrl: data.image_url,
     regularPrice: data.regular_price,
     discount: data.discount,
     maxCapacity: data.max_capacity,
