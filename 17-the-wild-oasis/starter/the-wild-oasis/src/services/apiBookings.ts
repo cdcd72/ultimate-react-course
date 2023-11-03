@@ -2,14 +2,34 @@ import { IBooking } from '../models/IBooking';
 import { getToday } from '../utils/helpers';
 import supabase from './supabase';
 
-export async function getBookings(): Promise<IBooking[]> {
-  const { data, error } = await supabase
+export interface IBookingFilter {
+  field: string;
+  value: string;
+  method: string;
+}
+
+export async function getBookings({
+  filters,
+}: {
+  filters: IBookingFilter[];
+}): Promise<IBooking[]> {
+  let query = supabase
     .from('bookings')
     .select('*, cabins(name), guests(full_name, email)');
+
+  if (filters?.length > 0) {
+    filters.forEach((filter) => {
+      query = query[filter.method](filter.field, filter.value);
+    });
+  }
+
+  const { data, error } = await query;
+
   if (error) {
     console.error(error);
     throw new Error('Bookings could not be loaded!');
   }
+
   return data.map((item) => {
     return {
       id: item.id,
@@ -45,7 +65,7 @@ export async function getBooking(id: number): Promise<IBooking> {
 
   return {
     id: data.id,
-    status: item.status,
+    status: data.status,
     startDate: data.start_date,
     endDate: data.end_date,
     numNights: data.num_nights,
