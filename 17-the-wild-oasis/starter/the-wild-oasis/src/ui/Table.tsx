@@ -113,6 +113,7 @@ function Body({
   data: any[];
   render: (value: any, index: number, array: any[]) => ReactNode;
 }) {
+  if (!data.length) return <Empty>No data to show at the moment.</Empty>;
   return <StyledBody>{data.map(render)}</StyledBody>;
 }
 
