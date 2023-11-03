@@ -91,7 +91,7 @@ function Table({
 function Header({ children }: { children: ReactNode }) {
   const { columns } = useContext(TableContext);
   return (
-    <StyledHeader role="row" columns={columns}>
+    <StyledHeader role="row" columns={columns} as="header">
       {children}
     </StyledHeader>
   );
@@ -106,7 +106,15 @@ function Row({ children }: { children: ReactNode }) {
   );
 }
 
-function Body({ children }: { children: ReactNode }) {}
+function Body({
+  data,
+  render,
+}: {
+  data: any[];
+  render: (value: any, index: number, array: any[]) => ReactNode;
+}) {
+  return <StyledBody>{data.map(render)}</StyledBody>;
+}
 
 Table.Header = Header;
 Table.Row = Row;

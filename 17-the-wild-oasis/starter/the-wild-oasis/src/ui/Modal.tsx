@@ -113,7 +113,7 @@ function Window({ children, name }: { children: ReactNode; name: string }) {
   const { openWindowName, closeWindow } = useContext(ModalContext);
   const ref = useOutsideClick(closeWindow);
 
-  if (name !== openWindowName) return null;
+  if (openWindowName !== name) return null;
   return createPortal(
     <Overlay>
       <StyledModal ref={ref}>

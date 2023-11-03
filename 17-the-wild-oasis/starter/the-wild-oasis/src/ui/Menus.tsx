@@ -1,4 +1,8 @@
-import styled from "styled-components";
+import { ReactNode, createContext, useContext, useState } from 'react';
+import { createPortal } from 'react-dom';
+import { HiEllipsisVertical } from 'react-icons/hi2';
+import styled from 'styled-components';
+import { useOutsideClick } from '../hooks/useOutsideClick';
 
 const StyledMenu = styled.div`
   display: flex;
@@ -25,7 +29,19 @@ const StyledToggle = styled.button`
   }
 `;
 
-const StyledList = styled.ul`
+interface Position {
+  x: number;
+  y: number;
+}
+
+interface ListProps {
+  position: Position;
+  ref?: React.MutableRefObject<Element | undefined>;
+}
+
+const StyledList = styled.ul.attrs<ListProps>((props) => ({
+  position: props.position,
+}))<ListProps>`
   position: fixed;
 
   background-color: var(--color-grey-0);
@@ -60,3 +76,96 @@ const StyledButton = styled.button`
     transition: all 0.3s;
   }
 `;
+
+type MenusContextType = {
+  openListId: string;
+  listPosition: Position;
+  setListPosition: React.Dispatch<React.SetStateAction<Position>>;
+  openList: React.Dispatch<React.SetStateAction<string>>;
+  closeList: () => void;
+};
+
+const MenusContext = createContext<MenusContextType>({
+  openListId: '',
+  listPosition: { x: 0, y: 0 },
+  setListPosition: () => {},
+  openList: () => {},
+  closeList: () => {},
+});
+
+function Menus({ children }: { children: ReactNode }) {
+  const [openListId, setOpenListId] = useState('');
+  const [listPosition, setListPosition] = useState({ x: 0, y: 0 });
+  const openList = setOpenListId;
+  const closeList = () => setOpenListId('');
+  return (
+    <MenusContext.Provider
+      value={{ openListId, listPosition, setListPosition, openList, closeList }}
+    >
+      {children}
+    </MenusContext.Provider>
+  );
+}
+
+function Toggle({ id }: { id: string }) {
+  const { openListId, setListPosition, openList, closeList } =
+    useContext(MenusContext);
+  function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+    const rect = event.target.closest('button').getBoundingClientRect();
+    setListPosition({
+      x: window.innerWidth - rect.width - rect.x, // 視窗內寬 - 點選按鈕寬度 - 點選按鈕的 x 位置
+      y: rect.y + rect.height + 8, // 點選按鈕的 y 位置 + 點選按鈕高度 + 補償
+    });
+    openListId === '' || openListId !== id ? openList(id) : closeList();
+  }
+  return (
+    <StyledToggle onClick={handleClick}>
+      <HiEllipsisVertical />
+    </StyledToggle>
+  );
+}
+
+function List({ children, id }: { children: ReactNode; id: string }) {
+  const { openListId, listPosition, closeList } = useContext(MenusContext);
+  const ref = useOutsideClick(closeList);
+
+  if (openListId !== id) return null;
+
+  return createPortal(
+    <StyledList position={listPosition} ref={ref}>
+      {children}
+    </StyledList>,
+    document.body
+  );
+}
+
+function Button({
+  children,
+  icon,
+  onClick,
+}: {
+  children: ReactNode;
+  icon: ReactNode;
+  onClick?: () => void;
+}) {
+  const { closeList } = useContext(MenusContext);
+  function handleClick() {
+    onClick?.();
+    closeList();
+  }
+  return (
+    <li>
+      <StyledButton onClick={handleClick}>
+        {icon}
+        <span>{children}</span>
+      </StyledButton>
+    </li>
+  );
+}
+
+Menus.Menu = StyledMenu;
+Menus.Toggle = Toggle;
+Menus.List = List;
+Menus.Button = Button;
+
+export default Menus;
