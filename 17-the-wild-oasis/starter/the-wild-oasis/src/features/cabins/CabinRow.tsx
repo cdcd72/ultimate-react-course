@@ -40,7 +40,7 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }: { cabin: ICabin }) {
-  const { isCreating, createCabin } = useCreateCabin();
+  const { createCabin } = useCreateCabin();
   const { isDeleting, deleteCabin } = useDeleteCabin();
 
   const {
