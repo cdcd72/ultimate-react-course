@@ -8,10 +8,17 @@ export interface IBookingFilter {
   method: string;
 }
 
+export interface IBookingSortBy {
+  field: string;
+  direction: string;
+}
+
 export async function getBookings({
   filters,
+  sortBy,
 }: {
   filters: IBookingFilter[];
+  sortBy: IBookingSortBy;
 }): Promise<IBooking[]> {
   let query = supabase
     .from('bookings')
@@ -20,6 +27,12 @@ export async function getBookings({
   if (filters?.length > 0) {
     filters.forEach((filter) => {
       query = query[filter.method](filter.field, filter.value);
+    });
+  }
+
+  if (sortBy) {
+    query = query.order(sortBy.field, {
+      ascending: sortBy.direction === 'asc',
     });
   }
 
