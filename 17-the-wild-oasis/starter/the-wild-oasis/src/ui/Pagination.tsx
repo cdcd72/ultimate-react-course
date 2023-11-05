@@ -2,6 +2,8 @@ import { HiChevronLeft, HiChevronRight } from 'react-icons/hi2';
 import { useSearchParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { PAGE_SIZE } from '../utils/constants';
+
 const StyledPagination = styled.div`
   width: 100%;
   display: flex;
@@ -66,8 +68,6 @@ const PaginationButton = styled.button.attrs<ButtonProps>((props) => ({
     color: var(--color-brand-50);
   }
 `;
-
-const PAGE_SIZE = 10;
 
 function Pagination({ count }: { count: number }) {
   const [searchParams, setSearchParams] = useSearchParams();

@@ -1,5 +1,6 @@
 import { IBooking } from '../models/IBooking';
 import { getToday } from '../utils/helpers';
+import { PAGE_SIZE } from '../utils/constants';
 import supabase from './supabase';
 
 export interface IBookingFilter {
@@ -16,13 +17,15 @@ export interface IBookingSortBy {
 export async function getBookings({
   filters,
   sortBy,
+  page,
 }: {
   filters: IBookingFilter[];
   sortBy: IBookingSortBy;
-}): Promise<IBooking[]> {
+  page: number;
+}): Promise<{ bookings: IBooking[]; bookingsCount: number | null }> {
   let query = supabase
     .from('bookings')
-    .select('*, cabins(name), guests(full_name, email)');
+    .select('*, cabins(name), guests(full_name, email)', { count: 'exact' });
 
   if (filters?.length > 0) {
     filters.forEach((filter) => {
@@ -36,32 +39,43 @@ export async function getBookings({
     });
   }
 
-  const { data, error } = await query;
+  if (page) {
+    // 0 ~ 9 = 10 筆
+    // 10 ~ 19 = 下 10 筆
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
+    query = query.range(from, to);
+  }
+
+  const { data, count, error } = await query;
 
   if (error) {
     console.error(error);
     throw new Error('Bookings could not be loaded!');
   }
 
-  return data.map((item) => {
-    return {
-      id: item.id,
-      status: item.status,
-      startDate: item.start_date,
-      endDate: item.end_date,
-      numNights: item.num_nights,
-      numGuests: item.num_guests,
-      hasBreakfast: item.has_breakfast,
-      isPaid: item.is_paid,
-      cabinPrice: item.cabin_price,
-      extrasPrice: item.extras_price,
-      totalPrice: item.total_price,
-      observations: item.observations,
-      cabins: { name: item.cabins.name },
-      guests: { fullName: item.guests.full_name, email: item.guests.email },
-      createdAt: new Date(item.created_at),
-    };
-  });
+  return {
+    bookings: data.map((item) => {
+      return {
+        id: item.id,
+        status: item.status,
+        startDate: item.start_date,
+        endDate: item.end_date,
+        numNights: item.num_nights,
+        numGuests: item.num_guests,
+        hasBreakfast: item.has_breakfast,
+        isPaid: item.is_paid,
+        cabinPrice: item.cabin_price,
+        extrasPrice: item.extras_price,
+        totalPrice: item.total_price,
+        observations: item.observations,
+        cabins: { name: item.cabins.name },
+        guests: { fullName: item.guests.full_name, email: item.guests.email },
+        createdAt: new Date(item.created_at),
+      };
+    }),
+    bookingsCount: count,
+  };
 }
 
 export async function getBooking(id: number): Promise<IBooking> {
