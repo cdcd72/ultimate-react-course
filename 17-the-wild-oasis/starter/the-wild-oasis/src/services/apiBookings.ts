@@ -25,7 +25,10 @@ export async function getBookings({
 }): Promise<{ bookings: IBooking[]; bookingsCount: number }> {
   let query = supabase
     .from('bookings')
-    .select('*, cabins(name), guests(full_name, email)', { count: 'exact' });
+    .select(
+      '*, cabins(name), guests(full_name, email, national_id, nationality, country_flag)',
+      { count: 'exact' }
+    );
 
   if (filters?.length > 0) {
     filters.forEach((filter) => {
@@ -70,7 +73,13 @@ export async function getBookings({
         totalPrice: item.total_price,
         observations: item.observations,
         cabins: { name: item.cabins.name },
-        guests: { fullName: item.guests.full_name, email: item.guests.email },
+        guests: {
+          fullName: item.guests.full_name,
+          email: item.guests.email,
+          nationalId: item.guests.national_id,
+          nationality: item.guests.nationality,
+          countryFlag: item.guests.country_flag,
+        },
         createdAt: new Date(item.created_at),
       };
     }),
@@ -104,7 +113,13 @@ export async function getBooking(id: number): Promise<IBooking> {
     totalPrice: data.total_price,
     observations: data.observations,
     cabins: { name: data.cabins.name },
-    guests: { fullName: data.guests.full_name, email: data.guests.email },
+    guests: {
+      fullName: data.guests.full_name,
+      email: data.guests.email,
+      nationalId: data.guests.national_id,
+      nationality: data.guests.nationality,
+      countryFlag: data.guests.country_flag,
+    },
     createdAt: new Date(data.created_at),
   };
 }
