@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 
 import BookingDataBox from './BookingDataBox';
 import Row from '../../ui/Row';
@@ -21,10 +22,11 @@ const HeadingGroup = styled.div`
 function BookingDetail() {
   const { isLoading, booking } = useBooking();
   const moveBack = useMoveBack();
+  const navigate = useNavigate();
 
   if (isLoading) return <Spinner />;
 
-  const { id, status } = booking!;
+  const { id: bookingId, status } = booking!;
 
   const statusToTagName: { [key: string]: string } = {
     unconfirmed: 'blue',
@@ -36,7 +38,7 @@ function BookingDetail() {
     <>
       <Row type="horizontal">
         <HeadingGroup>
-          <Heading as="h1">Booking #{id}</Heading>
+          <Heading as="h1">Booking #{bookingId}</Heading>
           <Tag type={statusToTagName[status]}>{status.replace('-', ' ')}</Tag>
         </HeadingGroup>
         <ButtonText onClick={moveBack}>&larr; Back</ButtonText>
@@ -45,6 +47,11 @@ function BookingDetail() {
       <BookingDataBox booking={booking!} />
 
       <ButtonGroup>
+        {status === 'unconfirmed' && (
+          <Button onClick={() => navigate(`/checkin/${bookingId}`)}>
+            Check in
+          </Button>
+        )}
         <Button variation="secondary" onClick={moveBack}>
           Back
         </Button>

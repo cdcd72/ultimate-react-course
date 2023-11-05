@@ -11,8 +11,8 @@ export interface IBooking {
   extrasPrice: number;
   totalPrice: number;
   observations: string;
-  cabins: { name: string };
-  guests: {
+  cabins?: { name: string };
+  guests?: {
     fullName: string;
     email: string;
     nationalId: string;

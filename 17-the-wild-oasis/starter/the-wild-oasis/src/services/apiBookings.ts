@@ -2,6 +2,7 @@ import { IBooking } from '../models/IBooking';
 import { getToday } from '../utils/helpers';
 import { PAGE_SIZE } from '../utils/constants';
 import supabase from './supabase';
+import { IUpdateBooking } from '../models/IUpdateBooking';
 
 export interface IBookingFilter {
   field: string;
@@ -178,10 +179,16 @@ export async function getStaysTodayActivity() {
   return data;
 }
 
-export async function updateBooking(id, obj) {
+export async function updateBooking(
+  id: number,
+  booking: IUpdateBooking
+): Promise<IBooking> {
   const { data, error } = await supabase
     .from('bookings')
-    .update(obj)
+    .update({
+      status: booking.status,
+      is_paid: booking.isPaid,
+    })
     .eq('id', id)
     .select()
     .single();
@@ -190,7 +197,22 @@ export async function updateBooking(id, obj) {
     console.error(error);
     throw new Error('Booking could not be updated');
   }
-  return data;
+
+  return {
+    id: data.id,
+    status: data.status,
+    startDate: data.start_date,
+    endDate: data.end_date,
+    numNights: data.num_nights,
+    numGuests: data.num_guests,
+    hasBreakfast: data.has_breakfast,
+    isPaid: data.is_paid,
+    cabinPrice: data.cabin_price,
+    extrasPrice: data.extras_price,
+    totalPrice: data.total_price,
+    observations: data.observations,
+    createdAt: new Date(data.created_at),
+  };
 }
 
 export async function deleteBooking(id) {
