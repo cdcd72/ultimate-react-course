@@ -22,7 +22,7 @@ export async function getBookings({
   filters: IBookingFilter[];
   sortBy: IBookingSortBy;
   page: number;
-}): Promise<{ bookings: IBooking[]; bookingsCount: number | null }> {
+}): Promise<{ bookings: IBooking[]; bookingsCount: number }> {
   let query = supabase
     .from('bookings')
     .select('*, cabins(name), guests(full_name, email)', { count: 'exact' });
@@ -74,7 +74,7 @@ export async function getBookings({
         createdAt: new Date(item.created_at),
       };
     }),
-    bookingsCount: count,
+    bookingsCount: count ?? 0,
   };
 }
 
