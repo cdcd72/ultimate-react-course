@@ -183,12 +183,15 @@ export async function updateBooking(
   id: number,
   booking: IUpdateBooking
 ): Promise<IBooking> {
+  const obj: { [key: string]: any } = {};
+  if (booking.status) obj['status'] = booking.status;
+  if (booking.isPaid) obj['is_paid'] = booking.isPaid;
+  if (booking.hasBreakfast) obj['has_breakfast'] = booking.hasBreakfast;
+  if (booking.extrasPrice) obj['extras_price'] = booking.extrasPrice;
+  if (booking.totalPrice) obj['total_price'] = booking.totalPrice;
   const { data, error } = await supabase
     .from('bookings')
-    .update({
-      status: booking.status,
-      is_paid: booking.isPaid,
-    })
+    .update(obj)
     .eq('id', id)
     .select()
     .single();
