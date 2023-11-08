@@ -11,13 +11,13 @@ export interface IBooking {
   extrasPrice: number;
   totalPrice: number;
   observations: string;
-  cabins?: { name: string };
+  cabins?: { name?: string };
   guests?: {
-    fullName: string;
-    email: string;
-    nationalId: string;
-    nationality: string;
-    countryFlag: string;
+    fullName?: string;
+    email?: string;
+    nationalId?: string;
+    nationality?: string;
+    countryFlag?: string;
   };
   createdAt: Date;
 }

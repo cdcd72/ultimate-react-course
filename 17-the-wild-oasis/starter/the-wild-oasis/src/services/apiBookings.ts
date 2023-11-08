@@ -3,6 +3,7 @@ import { getToday } from '../utils/helpers';
 import { PAGE_SIZE } from '../utils/constants';
 import supabase from './supabase';
 import { IUpdateBooking } from '../models/IUpdateBooking';
+import { IRecentBooking } from '../models/IRecentBooking';
 
 export interface IBookingFilter {
   field: string;
@@ -126,10 +127,12 @@ export async function getBooking(id: number): Promise<IBooking> {
 }
 
 // Returns all BOOKINGS that are were created after the given date. Useful to get bookings created in the last 30 days, for example.
-export async function getBookingsAfterDate(date) {
+export async function getBookingsAfterDate(
+  date: string
+): Promise<IRecentBooking[]> {
   const { data, error } = await supabase
     .from('bookings')
-    .select('created_at, totalPrice, extrasPrice')
+    .select('extras_price, total_price, created_at')
     .gte('created_at', date)
     .lte('created_at', getToday({ end: true }));
 
@@ -138,24 +141,49 @@ export async function getBookingsAfterDate(date) {
     throw new Error('Bookings could not get loaded');
   }
 
-  return data;
+  return data.map((item) => {
+    return {
+      extrasPrice: item.extras_price,
+      totalPrice: item.total_price,
+      createdAt: new Date(item.created_at),
+    };
+  });
 }
 
 // Returns all STAYS that are were created after the given date
-export async function getStaysAfterDate(date) {
+export async function getStaysAfterDate(date: string): Promise<IBooking[]> {
   const { data, error } = await supabase
     .from('bookings')
     // .select('*')
-    .select('*, guests(fullName)')
-    .gte('startDate', date)
-    .lte('startDate', getToday());
+    .select('*, guests(full_name)')
+    .gte('start_date', date)
+    .lte('start_date', getToday());
 
   if (error) {
     console.error(error);
     throw new Error('Bookings could not get loaded');
   }
 
-  return data;
+  return data.map((item) => {
+    return {
+      id: item.id,
+      status: item.status,
+      startDate: item.start_date,
+      endDate: item.end_date,
+      numNights: item.num_nights,
+      numGuests: item.num_guests,
+      hasBreakfast: item.has_breakfast,
+      isPaid: item.is_paid,
+      cabinPrice: item.cabin_price,
+      extrasPrice: item.extras_price,
+      totalPrice: item.total_price,
+      observations: item.observations,
+      guests: {
+        fullName: item.guests.full_name,
+      },
+      createdAt: new Date(item.created_at),
+    };
+  });
 }
 
 // Activity means that there is a check in or a check out today
