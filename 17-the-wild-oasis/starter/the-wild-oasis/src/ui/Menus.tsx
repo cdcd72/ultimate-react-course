@@ -111,6 +111,7 @@ function Toggle({ id }: { id: string }) {
   const { openListId, setListPosition, openList, closeList } =
     useContext(MenusContext);
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
+    event.stopPropagation();
     const rect = event.target.closest('button').getBoundingClientRect();
     setListPosition({
       x: window.innerWidth - rect.width - rect.x, // 視窗內寬 - 點選按鈕寬度 - 點選按鈕的 x 位置
@@ -127,7 +128,7 @@ function Toggle({ id }: { id: string }) {
 
 function List({ children, id }: { children: ReactNode; id: string }) {
   const { openListId, listPosition, closeList } = useContext(MenusContext);
-  const ref = useOutsideClick(closeList);
+  const ref = useOutsideClick(closeList, false);
 
   if (openListId !== id) return null;
 
