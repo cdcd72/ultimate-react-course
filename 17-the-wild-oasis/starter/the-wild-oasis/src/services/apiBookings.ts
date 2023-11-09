@@ -34,7 +34,19 @@ export async function getBookings({
 
   if (filters?.length > 0) {
     filters.forEach((filter) => {
-      query = query[filter.method](filter.field, filter.value);
+      switch (filter.method) {
+        case 'eq':
+          query = query.eq(filter.field, filter.value);
+          break;
+        case 'gte':
+          query = query.gte(filter.field, filter.value);
+          break;
+        case 'lte':
+          query = query.lte(filter.field, filter.value);
+          break;
+        default:
+          break;
+      }
     });
   }
 
