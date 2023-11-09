@@ -5,6 +5,7 @@ import Empty from '../../ui/Empty';
 import { useBookings } from './useBookings';
 import Spinner from '../../ui/Spinner';
 import Pagination from '../../ui/Pagination';
+import { IBooking } from '../../models/IBooking';
 
 function BookingTable() {
   const { isLoading, bookings, bookingsCount } = useBookings();
@@ -26,7 +27,10 @@ function BookingTable() {
         <Table.Body
           data={bookings}
           render={(booking) => (
-            <BookingRow booking={booking} key={booking.id} />
+            <BookingRow
+              booking={booking as IBooking}
+              key={(booking as IBooking).id}
+            />
           )}
         />
         <Table.Footer>

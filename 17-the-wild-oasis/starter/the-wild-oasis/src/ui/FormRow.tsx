@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactElement, ReactNode } from 'react';
 import { FieldError, FieldErrorsImpl, Merge } from 'react-hook-form';
 import { styled, css, RuleSet } from 'styled-components';
 
@@ -74,7 +74,9 @@ function FormRow({
 }) {
   return (
     <StyledFormRow display={display}>
-      {label && <Label htmlFor={children?.props.id}>{label}</Label>}
+      {label && (
+        <Label htmlFor={(children as ReactElement)?.props.id}>{label}</Label>
+      )}
       {children}
       {error && <Error>{`${error}`}</Error>}
     </StyledFormRow>
