@@ -8,8 +8,8 @@ import { useLogin } from './useLogin';
 import SpinnerMini from '../../ui/SpinnerMini';
 
 function LoginForm() {
-  const [email, setEmail] = useState('test@example.com');
-  const [password, setPassword] = useState('12345678');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const { isLoading, login } = useLogin();
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
