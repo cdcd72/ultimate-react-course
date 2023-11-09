@@ -6,7 +6,7 @@ import { register as registerApi } from '../../services/apiAuth';
 export function useRegister() {
   const { isLoading, mutate: register } = useMutation({
     mutationFn: registerApi,
-    onSuccess: (user) => {
+    onSuccess: () => {
       toast.success(
         "Account successfully created! Please verify the new account from the user's email address."
       );

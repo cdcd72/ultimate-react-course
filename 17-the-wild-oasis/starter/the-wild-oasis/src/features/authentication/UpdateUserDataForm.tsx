@@ -11,16 +11,13 @@ import { useUpdateUser } from './useUpdateUser';
 
 function UpdateUserDataForm() {
   // We don't need the loading state, and can immediately use the user data, because we know that it has already been loaded at this point
-  const {
-    user: {
-      email,
-      user_metadata: { fullName: currentFullName },
-    },
-  } = useUser();
+  const { user } = useUser();
+  const email = user?.email;
+  const currentFullName = user?.user_metadata.fullName;
   const { isUpdating, updateUser } = useUpdateUser();
 
   const [fullName, setFullName] = useState(currentFullName);
-  const [avatar, setAvatar] = useState(null);
+  const [avatar, setAvatar] = useState<File | null>(null);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -30,7 +27,7 @@ function UpdateUserDataForm() {
       {
         onSuccess: () => {
           setAvatar(null);
-          event.target.reset();
+          (event.target as HTMLFormElement).reset();
         },
       }
     );
@@ -59,7 +56,7 @@ function UpdateUserDataForm() {
         <FileInput
           id="avatar"
           accept="image/*"
-          onChange={(e) => setAvatar(e.target.files[0])}
+          onChange={(e) => setAvatar(e.target.files && e.target.files[0])}
           disabled={isUpdating}
         />
       </FormRow>

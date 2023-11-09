@@ -233,7 +233,7 @@ export async function updateBooking(
   id: number,
   booking: IUpdateBooking
 ): Promise<IBooking> {
-  const obj: { [key: string]: any } = {};
+  const obj: { [key: string]: unknown } = {};
   if (booking.status) obj['status'] = booking.status;
   if (booking.isPaid) obj['is_paid'] = booking.isPaid;
   if (booking.hasBreakfast) obj['has_breakfast'] = booking.hasBreakfast;

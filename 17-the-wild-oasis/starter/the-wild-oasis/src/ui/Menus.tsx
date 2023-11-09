@@ -112,10 +112,12 @@ function Toggle({ id }: { id: string }) {
     useContext(MenusContext);
   function handleClick(event: React.MouseEvent<HTMLButtonElement>) {
     event.stopPropagation();
-    const rect = event.target.closest('button').getBoundingClientRect();
+    const rect = (event.target as HTMLButtonElement)
+      ?.closest('button')
+      ?.getBoundingClientRect();
     setListPosition({
-      x: window.innerWidth - rect.width - rect.x, // 視窗內寬 - 點選按鈕寬度 - 點選按鈕的 x 位置
-      y: rect.y + rect.height + 8, // 點選按鈕的 y 位置 + 點選按鈕高度 + 補償
+      x: window.innerWidth - (rect?.width || 0) - (rect?.x || 0), // 視窗內寬 - 點選按鈕寬度 - 點選按鈕的 x 位置
+      y: (rect?.y || 0) + (rect?.height || 0) + 8, // 點選按鈕的 y 位置 + 點選按鈕高度 + 補償
     });
     openListId === '' || openListId !== id ? openList(id) : closeList();
   }

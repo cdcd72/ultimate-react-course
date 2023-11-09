@@ -29,7 +29,13 @@ const ChartBox = styled.div`
   }
 `;
 
-const startDataLight = [
+interface IStartData {
+  duration: string;
+  value: number;
+  color: string;
+}
+
+const startDataLight: IStartData[] = [
   {
     duration: '1 night',
     value: 0,
@@ -72,7 +78,7 @@ const startDataLight = [
   },
 ];
 
-const startDataDark = [
+const startDataDark: IStartData[] = [
   {
     duration: '1 night',
     value: 0,
@@ -115,17 +121,20 @@ const startDataDark = [
   },
 ];
 
-function prepareData(startData, stays) {
+function prepareData(
+  startData: IStartData[],
+  stays?: IBooking[]
+): IStartData[] {
   // A bit ugly code, but sometimes this is what it takes when working with real data 😅
 
-  function incArrayValue(arr, field) {
+  function incArrayValue(arr: IStartData[], field: string) {
     return arr.map((obj) =>
       obj.duration === field ? { ...obj, value: obj.value + 1 } : obj
     );
   }
 
   const data = stays
-    .reduce((arr, cur) => {
+    ?.reduce((arr, cur) => {
       const num = cur.numNights;
       if (num === 1) return incArrayValue(arr, '1 night');
       if (num === 2) return incArrayValue(arr, '2 nights');
@@ -139,7 +148,7 @@ function prepareData(startData, stays) {
     }, startData)
     .filter((obj) => obj.value > 0);
 
-  return data;
+  return data || [];
 }
 
 function DurationChart({ confirmedStays }: { confirmedStays?: IBooking[] }) {

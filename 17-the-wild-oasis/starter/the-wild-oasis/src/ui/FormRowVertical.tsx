@@ -33,9 +33,9 @@ function FormRowVertical({
 }) {
   return (
     <StyledFormRow>
-      {label && <Label htmlFor={children.props.id}>{label}</Label>}
+      {label && <Label htmlFor={children?.props.id}>{label}</Label>}
       {children}
-      {error && <Error>{error}</Error>}
+      {error && <Error>{`${error}`}</Error>}
     </StyledFormRow>
   );
 }

@@ -125,15 +125,17 @@ function BookingDataBox({ booking }: { booking: IBooking }) {
     hasBreakfast,
     observations,
     isPaid,
-    guests: {
-      fullName: guestName,
-      email,
-      nationality,
-      countryFlag,
-      nationalId,
-    },
-    cabins: { name: cabinName },
+    guests,
+    cabins,
   } = booking;
+  const {
+    fullName: guestName,
+    email,
+    nationality,
+    countryFlag,
+    nationalId,
+  } = guests || {};
+  const { name: cabinName } = cabins || {};
 
   return (
     <StyledBookingDataBox>

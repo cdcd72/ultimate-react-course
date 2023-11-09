@@ -57,13 +57,13 @@ function Stat({
   title: string;
   color: string;
   icon: ReactNode;
-  value: any;
+  value: unknown;
 }) {
   return (
     <StyledStat>
       <Icon color={color}>{icon}</Icon>
       <Title>{title}</Title>
-      <Value>{value}</Value>
+      <Value>{`${value}`}</Value>
     </StyledStat>
   );
 }

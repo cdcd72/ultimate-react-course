@@ -110,8 +110,8 @@ function Body({
   data,
   render,
 }: {
-  data: any[] | undefined;
-  render: (value: any, index: number, array: any[]) => ReactNode;
+  data: unknown[] | undefined;
+  render: (value: unknown, index: number, array: unknown[]) => ReactNode;
 }) {
   if (!data || (data && !data.length))
     return <Empty>No data to show at the moment</Empty>;

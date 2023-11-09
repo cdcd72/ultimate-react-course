@@ -58,9 +58,11 @@ function BookingRow({ booking }: { booking: IBooking }) {
     endDate,
     numNights,
     totalPrice,
-    cabins: { name: cabinName },
-    guests: { fullName: guestName, email },
+    guests,
+    cabins,
   } = booking;
+  const { fullName: guestName, email } = guests || {};
+  const { name: cabinName } = cabins || {};
 
   const statusToTagName: { [key: string]: string } = {
     unconfirmed: 'blue',
