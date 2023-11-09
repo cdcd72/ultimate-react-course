@@ -187,12 +187,12 @@ export async function getStaysAfterDate(date: string): Promise<IBooking[]> {
 }
 
 // Activity means that there is a check in or a check out today
-export async function getStaysTodayActivity() {
+export async function getStaysTodayActivity(): Promise<IBooking[]> {
   const { data, error } = await supabase
     .from('bookings')
-    .select('*, guests(fullName, nationality, countryFlag)')
+    .select('*, guests(full_name, nationality, country_flag)')
     .or(
-      `and(status.eq.unconfirmed,startDate.eq.${getToday()}),and(status.eq.checked-in,endDate.eq.${getToday()})`
+      `and(status.eq.unconfirmed,start_date.eq.${getToday()}),and(status.eq.checked-in,end_date.eq.${getToday()})`
     )
     .order('created_at');
 
@@ -204,7 +204,29 @@ export async function getStaysTodayActivity() {
     console.error(error);
     throw new Error('Bookings could not get loaded');
   }
-  return data;
+
+  return data.map((item) => {
+    return {
+      id: item.id,
+      status: item.status,
+      startDate: item.start_date,
+      endDate: item.end_date,
+      numNights: item.num_nights,
+      numGuests: item.num_guests,
+      hasBreakfast: item.has_breakfast,
+      isPaid: item.is_paid,
+      cabinPrice: item.cabin_price,
+      extrasPrice: item.extras_price,
+      totalPrice: item.total_price,
+      observations: item.observations,
+      guests: {
+        fullName: item.guests.full_name,
+        nationality: item.guests.nationality,
+        countryFlag: item.guests.country_flag,
+      },
+      createdAt: new Date(item.created_at),
+    };
+  });
 }
 
 export async function updateBooking(
